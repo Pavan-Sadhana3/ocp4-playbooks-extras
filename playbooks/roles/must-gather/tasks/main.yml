@@ -1,0 +1,14 @@
+---
+- name: Run oc adm must-gather
+  command: oc adm must-gather --dest-dir={{ must_gather_dest }}
+  args:
+    creates: "{{ must_gather_dest }}/cluster-scoped-resources"
+  register: must_gather_output
+
+- debug:
+    var: must_gather_output.stdout_lines
+
+- name: Compress must-gather logs
+  command: tar -czf {{ must_gather_archive }} -C {{ must_gather_dest | dirname }} {{ must_gather_dest | basename }}
+  args:
+    creates: "{{ must_gather_archive }}"
